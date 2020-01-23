@@ -2,8 +2,9 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <link rel="shortcut icon" href="https://raw.githubusercontent.com/Mineru98/UrlHit/master/static/imgs/favicon.ico">
+     <link rel="shortcut icon" href="{{ url_for('static', filename='imgs/favicon.ico') }}">
     <title>Url Hit</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index.css') }}">
 </head>
 <body>
       <h1>{{ name }} url hit {{ count }}</h1>
