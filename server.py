@@ -1,23 +1,11 @@
 # -*- coding:utf-8 -*-
-from flask import Flask, redirect, render_template, Response
-import os.path
+from flask import Flask, redirect, render_template
 import sqlite3 as lite
-import time
 
 app = Flask (__name__)
 app.debug = True
 database_filename = 'urlhit.db'
 conn = lite.connect(database_filename)
-
-def root_dir():
-    return os.path.abspath(os.path.dirname(__file__))
-
-def get_file(filename):
-    try:
-        src = os.path.join(root_dir(), filename)
-        return open(src).read()
-    except IOError as exc:
-        return str(exc)
 
 @app.route('/get/<type>')
 def _get(type):
