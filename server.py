@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-from flask import Flask, Response, redirect, render_template
+from flask import Flask, redirect, render_template, Response
 import os.path
 import sqlite3 as lite
 import time
@@ -8,7 +8,6 @@ app = Flask (__name__)
 app.debug = True
 database_filename = 'urlhit.db'
 conn = lite.connect(database_filename)
-
 
 def root_dir():
     return os.path.abspath(os.path.dirname(__file__))
@@ -24,21 +23,23 @@ def get_file(filename):
 def _get(type):
     conn = lite.connect(database_filename)
     cs = conn.cursor()
-    query = ("select count(*) from table1 where type='%s';" % type)
+    query = ("select count(*) from hitlog where type='%s';" % (type))
     cs.execute(query)
-    cs.fetchall()
+    _count = None;
+    all_rows = cs.fetchone()
     for i in all_rows:
-        print(i)
+        _count = i
     cs.close()
     conn.close()
+    return render_template('get.html', name=type, count=_count)
 
 '''
 마케팅 요소 첨가(SEO) 
 '''
 @app.route('/')
 def _init():
-    content = get_file('index.html')
-    return Response(content, mimetype="text/html")
+    user = 'UrlHit'
+    return render_template('index.html', name=user)
 
 '''
 type = 유입 플랫폼
