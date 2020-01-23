@@ -7,20 +7,6 @@ app.debug = True
 database_filename = 'urlhit.db'
 conn = lite.connect(database_filename)
 
-@app.route('/get/<type>')
-def _get(type):
-    conn = lite.connect(database_filename)
-    cs = conn.cursor()
-    query = ("select count(*) from hitlog where type='%s';" % (type))
-    cs.execute(query)
-    _count = None;
-    all_rows = cs.fetchone()
-    for i in all_rows:
-        _count = i
-    cs.close()
-    conn.close()
-    return render_template('get.html', name=type, count=_count)
-
 '''
 마케팅 요소 첨가(SEO) 
 '''
@@ -72,6 +58,20 @@ def redriect(type):
                 continue
         else:
             continue
+
+@app.route('/get/<type>')
+def _get(type):
+    conn = lite.connect(database_filename)
+    cs = conn.cursor()
+    query = ("select count(*) from hitlog where type='%s';" % (type))
+    cs.execute(query)
+    _count = None;
+    all_rows = cs.fetchone()
+    for i in all_rows:
+        _count = i
+    cs.close()
+    conn.close()
+    return render_template('get.html', name=type, count=_count)
 
 if __name__ == "__main__":
     cs = conn.cursor()
