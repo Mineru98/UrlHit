@@ -15,6 +15,10 @@ def _init():
     user = 'UrlHit'
     return render_template('index.html', name=user)
 
+@app.route('/apply')
+def _apply():
+    return render_template('apply.html')
+
 '''
 type = 유입 플랫폼
 '''
