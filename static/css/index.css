@@ -5,7 +5,13 @@ body {
 
 /**/
 
-.top {
+.menu.top {
+    padding: 10px;
+    text-align: center;
+    background: #313443;
+}
+
+.content.top {
     padding: 20px;
     text-align: left;
     width: 100%;
@@ -14,6 +20,10 @@ body {
     border: 1px solid;
     border-color: rgba(0, 0, 0, 0.2);
     border-width:0px 0px 1px 0px;
+}
+
+.content.mid {
+    padding: 20px;
 }
 
 .pusher {

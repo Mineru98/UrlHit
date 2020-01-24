@@ -9,28 +9,137 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/semantic.min.css') }}">
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
     <script src="{{ url_for('static', filename='js/semantic.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/Chart.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
+    <style>
+        canvas {
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .chart-container {
+            width: 500px;
+            margin-left: 40px;
+            margin-right: 40px;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+    </style>
 </head>
 
 <body>
     <div class="ui overlay visible left vertical inverted sidebar menu default">
+        <div class="menu top">
+            <img src="{{ url_for('static', filename='imgs/punch.png') }}" width="64">
+        </div>
+        <div class="menu top">
+            <h3 class="ui header white">UrlHit</h3>
+        </div>
         <a class="item">
             <div class="ui header white">
                 <i class="home icon"></i>
                 Home
             </div>
         </a>
-        <!-- <a class="item">
-            <div class="ui header white">
-                <i class="block layout icon"></i>
-                DashBoard
-            </div>
-        </a> -->
     </div>
     <div class="pusher">
-        <div class="top">
-            <h1 class="ui header">Dashboard</h1>
+        <div class="content top">
+            <h1 class="ui header">Home</h1>
         </div>
-        <h1>Hello {{ name }}!</h1>
+        <div class="content mid">
+            <h1>Hello {{ name }}!</h1>
+            <div class="container">
+                <div class="chart-container">
+                    <canvas id="canvas"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="canvas2"></canvas>
+                </div>
+            </div>
+            <script>
+                var color = Chart.helpers.color;
+
+                function createConfig(colorName) {
+                    return {
+                        type: 'line',
+                        data: {
+                            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                            datasets: [{
+                                label: 'My First dataset',
+                                data: [
+                                    randomScalingFactor(),
+                                    randomScalingFactor(),
+                                    randomScalingFactor(),
+                                    randomScalingFactor(),
+                                    randomScalingFactor(),
+                                    randomScalingFactor(),
+                                    randomScalingFactor()
+                                ],
+                                backgroundColor: color(window.chartColors[colorName]).alpha(0.5).rgbString(),
+                                borderColor: window.chartColors[colorName],
+                                borderWidth: 1,
+                                pointStyle: 'rectRot',
+                                pointRadius: 5,
+                                pointBorderColor: 'rgb(0, 0, 0)'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            legend: {
+                                labels: {
+                                    usePointStyle: false
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    display: true,
+                                    scaleLabel: {
+                                        display: true,
+                                        labelString: 'Month'
+                                    }
+                                },
+                                y: {
+                                    display: true,
+                                    scaleLabel: {
+                                        display: true,
+                                        labelString: 'Value'
+                                    }
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Normal Legend'
+                            }
+                        }
+                    };
+                }
+
+                function createPointStyleConfig(colorName) {
+                    var config = createConfig(colorName);
+                    config.options.legend.labels.usePointStyle = true;
+                    config.options.title.text = 'Point Style Legend';
+                    return config;
+                }
+                window.onload = function() {
+                    [{
+                        id: 'canvas',
+                        config: createConfig('red')
+                    }, {
+                        id: 'canvas2',
+                        config: createPointStyleConfig('blue')
+                    }].forEach(function(details) {
+                        var ctx = document.getElementById(details.id).getContext('2d');
+                        new Chart(ctx, details.config);
+                    });
+                };
+            </script>
+        </div>
     </div>
 
 </body>
