@@ -19,7 +19,7 @@
         }
 
         .chart-container {
-            width: 500px;
+            width: 600px;
             margin-left: 40px;
             margin-right: 40px;
         }
@@ -61,13 +61,19 @@
                 <div class="chart-container">
                     <canvas id="canvas2"></canvas>
                 </div>
+                <div class="chart-container">
+                    <canvas id="canvas3"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="canvas4"></canvas>
+                </div>
             </div>
             <script>
                 var color = Chart.helpers.color;
 
-                function createConfig(colorName) {
+                function createConfig(colorName, type) {
                     return {
-                        type: 'line',
+                        type: type,
                         data: {
                             labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
                             datasets: [{
@@ -119,20 +125,90 @@
                         }
                     };
                 }
+                
+                function createConfig_pie(colorName) {
+                    return {
+                        type: "pie",
+                        data: {
+                            labels: ['Facebook', 'Naver', 'Kakao', 'Instagram'],
+                            datasets: [{
+                                label: 'My First dataset',
+                                data: [
+                                    randomScalingFactor(),
+                                    randomScalingFactor(),
+                                    randomScalingFactor(),
+                                    randomScalingFactor()
+                                ],
+                                backgroundColor: [
+                                    window.chartColors.blue,
+                                    window.chartColors.green,
+                                    window.chartColors.yellow,
+                                    window.chartColors.red
+                                ],
+                                borderWidth: 1,
+                                pointStyle: 'rectRot',
+                                pointRadius: 5,
+                                pointBorderColor: 'rgb(0, 0, 0)'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            legend: {
+                                labels: {
+                                    usePointStyle: false
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    display: true,
+                                    scaleLabel: {
+                                        display: true,
+                                        labelString: 'UrlRoot'
+                                    }
+                                },
+                                y: {
+                                    display: true,
+                                    scaleLabel: {
+                                        display: true,
+                                        labelString: 'Value'
+                                    }
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Normal Legend'
+                            }
+                        }
+                    };
+                }
 
-                function createPointStyleConfig(colorName) {
-                    var config = createConfig(colorName);
-                    config.options.legend.labels.usePointStyle = true;
-                    config.options.title.text = 'Point Style Legend';
+                function createPointStyleConfig(colorName, type = "bar") {
+                    var config;
+                    if(type == "pie") {
+                        config = createConfig_pie(colorName);
+                        config.options.legend.labels.usePointStyle = true;
+                        config.options.title.text = 'UrlHit';
+                    } else {
+                        config = createConfig(colorName, type);
+                        config.options.legend.labels.usePointStyle = true;
+                        config.options.title.text = 'Point Style Legend';
+                    }
                     return config;
                 }
+                
                 window.onload = function() {
-                    [{
+                    [ {
                         id: 'canvas',
-                        config: createConfig('red')
+                        config: createPointStyleConfig('blue', 'pie')
                     }, {
                         id: 'canvas2',
-                        config: createPointStyleConfig('blue')
+                        config: createPointStyleConfig('red', 'line')
+                    }, {
+                        id: 'canvas3',
+                        config: createPointStyleConfig('green', 'bar')
+                    }, {
+                        id: 'canvas4',
+                        config: createPointStyleConfig('yellow', 'bar')
                     }].forEach(function(details) {
                         var ctx = document.getElementById(details.id).getContext('2d');
                         new Chart(ctx, details.config);
