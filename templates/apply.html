@@ -1,17 +1,102 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <link rel="shortcut icon" href="{{ url_for('static', filename='imgs/favicon.ico') }}">
-    <title>Url Hit</title>
+    <title>Url Hit - Apply</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/apply.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/semantic.min.css') }}">
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
     <script src="{{ url_for('static', filename='js/semantic.min.js') }}"></script>
 </head>
+
 <body>
-    <div>
-        Apply
+    <div class="ui overlay visible left vertical inverted sidebar menu default">
+        <div class="menu top">
+            <img src="{{ url_for('static', filename='imgs/punch.png') }}" width="64">
+        </div>
+        <div class="menu top">
+            <h3 class="ui header white">UrlHit</h3>
+        </div>
+        <a class="item" href="/">
+            <div class="ui header white">
+                <i class="home icon size-a">
+                </i>
+                Home
+            </div>
+        </a>
+        <a class="item" href="/apply">
+            <div class="ui header white">
+                <i class="edit icon size-a">
+                </i>
+                Apply
+            </div>
+        </a>
     </div>
+    <div class="pusher">
+        <div class="content top">
+            <h1 class="ui header">Apply</h1>
+        </div>
+
+        <div class="content mid">
+            <div class="ui raised very padded text container segment">
+                <h2 class="ui header">Url Apply</h2>
+                <p>원하는 URL을 등록하고 해당 링크로 연결하세요.</p>
+                <p></p>
+            </div>
+            <div class="ui one column center aligned grid">
+                <div class="row">
+                    <div class="column">
+                        <div class="ui action right labeled input first">
+                            <div class="ui dropdown label">
+                                <div class="text">http://</div>
+                                <i class="dropdown icon"></i>
+                                <div class="menu transition hidden">
+                                    <div class="item">http://</div>
+                                    <div class="item">https://</div>
+                                </div>
+                            </div>
+                            <input type="text" class="large" placeholder="input your site">
+                            <div class="ui blue button" onclick="search_click();">Search</div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="column">
+                        <div class="ui action right labeled input second transition hidden">
+                            <div class="ui label">
+                                http://www.urlhit.shop/
+                            </div>
+                            <input type="text" class="normal" placeholder="Find domain">
+                            <div class="ui blue button" onclick="apply_click();">Apply</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            $('.ui.dropdown.label').dropdown();
+
+            function search_click() {
+                $('.ui.action.right.labeled.input.second.transition.hidden').transition('fade down');
+                // 클립보드 복사 기능
+                // var tempElem = document.createElement('textarea');
+                // tempElem.value = 'I am copied text!';
+                // document.body.appendChild(tempElem);
+                // tempElem.select();
+                // document.execCommand("copy");
+                // document.body.removeChild(tempElem);
+            }
+
+            function apply_click() {
+                alert("적용 완료");
+                location.href = "/";
+            }
+        </script>
+    </div>
+
 </body>
+
 </html>

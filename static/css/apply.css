@@ -1,3 +1,55 @@
-.ui.header.large.white {
-    color: rgba(0, 0, 0, 0.88);
+body {
+    background: #f0f6ff;
+}
+
+/**/
+
+.menu.top {
+    padding: 10px;
+    text-align: center;
+    background: #313443;
+}
+
+.content.top {
+    padding: 20px;
+    text-align: left;
+    width: 100%;
+    height: 90px;
+    background-color: #ffffff;
+    border: 1px solid;
+    border-color: rgba(0, 0, 0, 0.2);
+    border-width:0px 0px 1px 0px;
+}
+
+.content.mid {
+    padding: 20px;
+}
+
+.pusher {
+    margin-left: 260px;
+}
+
+/* custom semantic css */
+.ui.header.white {
+    font-size: 1.6em;
+    color: rgba(255, 255, 255, 0.88);
+}
+
+.ui.inverted.menu.default {
+    background: #313443;
+}
+
+i.home.icon.size-a {
+    font-size: 2rem;
+}
+
+i.edit.icon.size-a {
+    font-size: 2rem;
+}
+
+input.large {
+    width: 331.218px;
+}
+input.normal {
+    width: 250px;
 }

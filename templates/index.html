@@ -41,10 +41,18 @@
         <div class="menu top">
             <h3 class="ui header white">UrlHit</h3>
         </div>
-        <a class="item">
+        <a class="item" href="/">
             <div class="ui header white">
-                <i class="home icon"></i>
+                <i class="home icon size-a">
+                </i>
                 Home
+            </div>
+        </a>
+        <a class="item" href="/apply">
+            <div class="ui header white">
+                <i class="edit icon size-a">
+                </i>
+                Apply
             </div>
         </a>
     </div>
@@ -125,7 +133,7 @@
                         }
                     };
                 }
-                
+
                 function createConfig_pie(colorName) {
                     return {
                         type: "pie",
@@ -184,7 +192,7 @@
 
                 function createPointStyleConfig(colorName, type = "bar") {
                     var config;
-                    if(type == "pie") {
+                    if (type == "pie") {
                         config = createConfig_pie(colorName);
                         config.options.legend.labels.usePointStyle = true;
                         config.options.title.text = 'UrlHit';
@@ -195,9 +203,8 @@
                     }
                     return config;
                 }
-                
                 window.onload = function() {
-                    [ {
+                    [{
                         id: 'canvas',
                         config: createPointStyleConfig('blue', 'pie')
                     }, {

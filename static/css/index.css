@@ -39,3 +39,11 @@ body {
 .ui.inverted.menu.default {
     background: #313443;
 }
+
+i.home.icon.size-a {
+    font-size: 2rem;
+}
+
+i.edit.icon.size-a {
+    font-size: 2rem;
+}
