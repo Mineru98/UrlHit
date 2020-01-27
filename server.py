@@ -25,10 +25,8 @@ def _search():
     conn = lite.connect(database_filename)
     cs = conn.cursor()
     query = "SELECT COUNT(*) FROM redirect WHERE redirecturl='%s';" % (request.get_json()['url'])
-    print(query)
     cs.execute(query)
     count = cs.fetchall()
-    print(count[0][0])
     if count[0][0] == 0:
         cs.execute("SELECT COUNT(*) FROM redirect;")
         _count = cs.fetchall()
@@ -60,14 +58,14 @@ type = 유입 플랫폼
 @app.route('/<type>')
 def redriect(type):
     if type == 'favicon.ico':
-        return redirect('/static/imgs/favicon.ico')
+        pass
     else:
         conn = lite.connect(database_filename)
         cs = conn.cursor()
         query = "SELECT * FROM redirect WHERE shareurl='%s';" % (type)
         cs.execute(query)
         _data = cs.fetchall()
-        cs.execute("INSERT INTO hitlog (k_redirect, time) values ('%s', DATETIME('NOW'))" % (type))
+        cs.execute("INSERT INTO hitlog (k_redirect, url, time) values ('%s', '%s', DATETIME('NOW'))" % (type, _data[0][2]))
         conn.commit()
         cs.close()
         conn.close()
@@ -77,7 +75,7 @@ def redriect(type):
 def _get(type):
     conn = lite.connect(database_filename)
     cs = conn.cursor()
-    query = ("SELECT COUNT(*) FROM redirect WHERE shareurl='%s';" % (type))
+    query = ("SELECT COUNT(*) FROM hitlog WHERE url='%s';" % (type))
     cs.execute(query)
     _count = cs.fetchone()
     cs.close()
@@ -86,7 +84,7 @@ def _get(type):
 
 if __name__ == "__main__":
     cs = conn.cursor()
-    query = "CREATE TABLE IF NOT EXISTS hitlog (id INTEGER PRIMARY KEY AUTOINCREMENT, k_redirect INTEGER, tag VARCHAR(64) DEFAULT 'default', time DATETIME, FOREIGN KEY(k_redirect) REFERENCES redirect(id))"
+    query = "CREATE TABLE IF NOT EXISTS hitlog (id INTEGER PRIMARY KEY AUTOINCREMENT, k_redirect INTEGER, tag VARCHAR(64) DEFAULT 'default', url VARCHAR(256), time DATETIME, FOREIGN KEY(k_redirect) REFERENCES redirect(id))"
     cs.execute(query)
     query = "CREATE TABLE IF NOT EXISTS redirect (id INTEGER PRIMARY KEY AUTOINCREMENT, redirecturl VARCHAR(256), shareurl VARCHAR(256))"
     cs.execute(query)
