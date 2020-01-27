@@ -3,6 +3,7 @@ class URL_Shortener:
     url2id = {}
     
     def shorten_url(self, original_url, _id):
+        self.url2id = {}
         self.id = _id
         if original_url in self.url2id:
             id = self.url2id[original_url]

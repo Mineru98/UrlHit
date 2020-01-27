@@ -64,7 +64,7 @@ def _search():
         compat_url = URL_Shortener().shorten_url(request.get_json()['url'], _count[0][0] + 1)
         cs.close()
         conn.close()
-        data = {"Code": "200", "url": compat_url, "size": 1, "tag": {"1":"Default"}}
+        data = {"Code": "200", "url": 'https://urlhit.run.goorm.io/'+compat_url, "size": 1, "tag": {"1":"Default"}}
         return data
     elif count[0][0] > 0:
         cs.execute("SELECT tag FROM redirect WHERE redirecturl='%s';" % (request.get_json()['url']))
@@ -100,24 +100,9 @@ def _addtag():
     cs = conn.cursor()
     cs.execute("SELECT COUNT(*) FROM redirect;")
     count = cs.fetchall()
-    max = count[0][0] + 1
-    
-    compat_url = URL_Shortener().shorten_url(request.get_json()['redirecturl'], max)
-    query = "SELECT COUNT(*) FROM redirect WHERE shareurl='%s';" % (compat_url)
-    cs.execute(query)
-    check = cs.fetchall()
-    print(query)
-    print(check[0][0])
-    while check[0][0] != 0:
-        conn = lite.connect(database_filename)
-        cs = conn.cursor()
-        compat_url = URL_Shortener().shorten_url(request.get_json()['redirecturl'], max)
-        cs.execute("SELECT COUNT(*) FROM redirect WHERE shareurl='%s';" % (compat_url))
-        check = cs.fetchall()
-
+    compat_url = URL_Shortener().shorten_url(request.get_json()['redirecturl'], count[0][0] + 1)
     cs.close()
     conn.close()
-    print(compat_url)
     data = {"Code": "201", "url": 'https://urlhit.run.goorm.io/'+compat_url, "tag": request.get_json()['tag']}
     return data
 '''
