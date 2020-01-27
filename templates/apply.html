@@ -105,6 +105,7 @@
                     contentType: "application/json",
                     data: JSON.stringify(_data),
                     success: function(result) {
+                        console.log(result);
                         $('#label-' + (Number(_size) + 1)).remove();
                         $(".tag-list").append('<a class="ui tag label" id="label-' + (_size + 1) + '" onClick="labelClick()">' + result.tag + '</a>');
                         $(".ui.action.right.labeled.input.second.transition.visible").attr('class', 'ui action right labeled input second transition hidden');

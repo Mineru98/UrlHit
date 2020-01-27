@@ -77,80 +77,18 @@
             </div>
             <script>
                 var color = Chart.helpers.color;
-
-                function createConfig(colorName, type) {
-                    return {
-                        type: type,
-                        data: {
-                            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-                            datasets: [{
-                                label: 'My First dataset',
-                                data: [
-                                    randomScalingFactor(),
-                                    randomScalingFactor(),
-                                    randomScalingFactor(),
-                                    randomScalingFactor(),
-                                    randomScalingFactor(),
-                                    randomScalingFactor(),
-                                    randomScalingFactor()
-                                ],
-                                backgroundColor: color(window.chartColors[colorName]).alpha(0.5).rgbString(),
-                                borderColor: window.chartColors[colorName],
-                                borderWidth: 1,
-                                pointStyle: 'rectRot',
-                                pointRadius: 5,
-                                pointBorderColor: 'rgb(0, 0, 0)'
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            legend: {
-                                labels: {
-                                    usePointStyle: false
-                                }
-                            },
-                            scales: {
-                                x: {
-                                    display: true,
-                                    scaleLabel: {
-                                        display: true,
-                                        labelString: 'Month'
-                                    }
-                                },
-                                y: {
-                                    display: true,
-                                    scaleLabel: {
-                                        display: true,
-                                        labelString: 'Value'
-                                    }
-                                }
-                            },
-                            title: {
-                                display: true,
-                                text: 'Normal Legend'
-                            }
-                        }
-                    };
-                }
-
-                function createConfig_pie(colorName) {
+                function createConfig(colorName, labels, data) {
                     return {
                         type: "pie",
                         data: {
-                            labels: ['Facebook', 'Naver', 'Kakao', 'Instagram'],
+                            labels: labels,
                             datasets: [{
                                 label: 'My First dataset',
-                                data: [
-                                    randomScalingFactor(),
-                                    randomScalingFactor(),
-                                    randomScalingFactor(),
-                                    randomScalingFactor()
-                                ],
+                                data: data,
                                 backgroundColor: [
                                     window.chartColors.blue,
                                     window.chartColors.green,
-                                    window.chartColors.yellow,
-                                    window.chartColors.red
+                                    window.chartColors.red,
                                 ],
                                 borderWidth: 1,
                                 pointStyle: 'rectRot',
@@ -189,35 +127,47 @@
                     };
                 }
 
-                function createPointStyleConfig(colorName, type = "bar") {
+                function createPointStyleConfig(colorName, title = 'UrlHit', labels = [], data = []) {
                     var config;
-                    if (type == "pie") {
-                        config = createConfig_pie(colorName);
-                        config.options.legend.labels.usePointStyle = true;
-                        config.options.title.text = 'UrlHit';
-                    } else {
-                        config = createConfig(colorName, type);
-                        config.options.legend.labels.usePointStyle = true;
-                        config.options.title.text = 'Point Style Legend';
-                    }
+                    config = createConfig(colorName, labels, data);
+                    config.options.legend.labels.usePointStyle = true;
+                    config.options.title.text = title;
                     return config;
                 }
                 window.onload = function() {
-                    [{
-                        id: 'canvas',
-                        config: createPointStyleConfig('blue', 'pie')
-                    }, {
-                        id: 'canvas2',
-                        config: createPointStyleConfig('red', 'line')
-                    }, {
-                        id: 'canvas3',
-                        config: createPointStyleConfig('green', 'bar')
-                    }, {
-                        id: 'canvas4',
-                        config: createPointStyleConfig('yellow', 'bar')
-                    }].forEach(function(details) {
-                        var ctx = document.getElementById(details.id).getContext('2d');
-                        new Chart(ctx, details.config);
+                    const _data = [];
+                    var labelList = [];
+                    var dataList = [];
+                    var urlList = [];
+                    $.ajax({
+                        type: "POST",
+                        url: "/",
+                        dataType: "json",
+                        contentType: "application/json",
+                        data: JSON.stringify(_data),
+                        success: function(result) {
+                            if (result.Code == 200) {
+                                for (var i = 1; i <= result.size; i++) {
+                                    labelList.push(result.tags[i]);
+                                    urlList.push(result.urls[i]);
+                                    dataList.push(result.hitcount[i])
+                                }
+                            }
+                            const canvasList = [{
+                                id: 'canvas',
+                                config: createPointStyleConfig('blue', 'UrlHit Tag', labelList, dataList)
+                            }, {
+                                id: 'canvas2',
+                                config: createPointStyleConfig('red', 'UrlHit URL', urlList, dataList)
+                            }];
+                            canvasList.forEach(function(details) {
+                                var ctx = document.getElementById(details.id).getContext('2d');
+                                new Chart(ctx, details.config);
+                            });
+                        },
+                        error: function(xhr, status, error) {
+                            console.log(error);
+                        }
                     });
                 };
             </script>

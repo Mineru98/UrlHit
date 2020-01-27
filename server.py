@@ -16,6 +16,37 @@ def _init():
     user = 'UrlHit'
     return render_template('index.html', name=user)
 
+@app.route('/', methods=['POST'])
+def _gettag():
+    conn = lite.connect(database_filename)
+    cs = conn.cursor()
+    cs.execute("SELECT tag from redirect;")
+    tags = cs.fetchall()
+    cs.execute("SELECT redirecturl from redirect;")
+    urls = cs.fetchall()
+    data = {"Code": "200", "size": len(tags), "urls": None, "tags": None, "hitcount": None}
+    list = {}
+    vList = {}
+    uList = {}
+    stack = 1
+    for i in urls:
+        uList[stack] = i[0]
+        stack = stack + 1
+    stack = 1
+    for i in tags:
+        query = "SELECT COUNT(*) from hitlog WHERE k_redirect in (SELECT id from redirect WHERE redirecturl='%s' AND tag='%s');" % (urls[stack-1][0], i[0])
+        cs.execute(query)
+        count = cs.fetchall()
+        vList[stack] = count[0][0]
+        list[stack] = i[0]
+        stack = stack + 1
+    data["tags"] = list
+    data["hitcount"] = vList
+    data["urls"] = uList
+    cs.close()
+    conn.close()
+    return data
+
 @app.route('/apply')
 def _apply():
     return render_template('apply.html')
@@ -43,8 +74,8 @@ def _search():
         data = {"Code": "409", "size": len(_tag), "tag": None}
         list = {}
         stack = 1
-        for i in _tag[0]:
-            list[stack] = i
+        for i in _tag:
+            list[stack] = i[0]
             stack = stack + 1
         data["tag"] = list
         return data
@@ -56,8 +87,7 @@ def _applyurl():
     cs.execute("SELECT COUNT(*) FROM redirect;")
     count = cs.fetchall()
     compat_url = URL_Shortener().shorten_url(request.get_json()['redirecturl'], count[0][0] + 1)
-    cs.execute("INSERT INTO redirect (redirecturl, shareurl, tag) values ('%s', '%s', '%s')" % (request.get_json()['redirecturl'], compat_url[28:], request.get_json()['tag']))
-    # cs.execute("INSERT INTO redirect (redirecturl, shareurl, tag) values ('%s', '%s', '%s')" % (request.get_json()['redirecturl'], compat_url[23:], request.get_json()['tag']))
+    cs.execute("INSERT INTO redirect (redirecturl, shareurl, tag) values ('%s', '%s', '%s')" % (request.get_json()['redirecturl'], compat_url, request.get_json()['tag']))
     conn.commit()
     cs.close()
     conn.close()
@@ -70,10 +100,25 @@ def _addtag():
     cs = conn.cursor()
     cs.execute("SELECT COUNT(*) FROM redirect;")
     count = cs.fetchall()
-    compat_url = URL_Shortener().shorten_url(request.get_json()['redirecturl'], count[0][0] + 1)
+    max = count[0][0] + 1
+    
+    compat_url = URL_Shortener().shorten_url(request.get_json()['redirecturl'], max)
+    query = "SELECT COUNT(*) FROM redirect WHERE shareurl='%s';" % (compat_url)
+    cs.execute(query)
+    check = cs.fetchall()
+    print(query)
+    print(check[0][0])
+    while check[0][0] != 0:
+        conn = lite.connect(database_filename)
+        cs = conn.cursor()
+        compat_url = URL_Shortener().shorten_url(request.get_json()['redirecturl'], max)
+        cs.execute("SELECT COUNT(*) FROM redirect WHERE shareurl='%s';" % (compat_url))
+        check = cs.fetchall()
+
     cs.close()
     conn.close()
-    data = {"Code": "201", "url": compat_url, "tag": request.get_json()['tag']}
+    print(compat_url)
+    data = {"Code": "201", "url": 'https://urlhit.run.goorm.io/'+compat_url, "tag": request.get_json()['tag']}
     return data
 '''
 type = 유입 플랫폼

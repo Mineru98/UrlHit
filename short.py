@@ -12,8 +12,7 @@ class URL_Shortener:
             shorten_url = self.encode(self.id)
             self.id += 1
         
-        return "https://urlhit.run.goorm.io/"+shorten_url
-        # return "http://www.urlhit.shop/"+shorten_url
+        return shorten_url
     
     def encode(self, id):
         characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
