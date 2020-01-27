@@ -40,6 +40,27 @@
         </div>
 
         <div class="content mid">
+            <div class="ui tiny modal">
+                <i class="close icon"></i>
+                <div class="header">
+                    Tag 추가
+                </div>
+                <div class="image content">
+                    <div class="description">
+                        <div class="ui action fluid right input">
+                            <input type="text" class="normal" id="tag-input" placeholder="input new tag">
+                        </div>
+                    </div>
+                </div>
+                <div class="actions">
+                    <div class="ui deny button" id="cancel">
+                        취소
+                    </div>
+                    <div class="ui positive right icon button" id="add">
+                        추가
+                    </div>
+                </div>
+            </div>
             <div class="ui text container segment">
                 <h2 class="ui header">Url Apply</h2>
                 <p>원하는 URL을 등록하고 해당 링크로 연결하세요.</p>
@@ -49,18 +70,13 @@
                 <div class="row">
                     <div class="column">
                         <div class="ui action right labeled input first">
-                            <div class="ui dropdown label">
-                                <div class="text" id="protocol">http://</div>
-                                <i class="dropdown icon"></i>
-                                <div class="menu transition hidden">
-                                    <div class="item">http://</div>
-                                    <div class="item">https://</div>
-                                </div>
-                            </div>
                             <input type="text" class="large" id="search-url" placeholder="input your site">
                             <div class="ui blue button" id="search">Search</div>
-
                         </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="column tag-list">
                     </div>
                 </div>
                 <div class="row">
@@ -74,11 +90,37 @@
             </div>
         </div>
         <script>
+            var _tag = "Default";
+            var _size = 0;
             $('.ui.dropdown.label').dropdown();
+            $('#add').click(function() {
+                var _data = {
+                    "tag": document.getElementById('tag-input').value,
+                    "redirecturl": document.getElementById('search-url').value
+                };
+                $.ajax({
+                    type: "POST",
+                    url: "/tag/add",
+                    dataType: "json",
+                    contentType: "application/json",
+                    data: JSON.stringify(_data),
+                    success: function(result) {
+                        $('#label-' + (Number(_size) + 1)).remove();
+                        $(".tag-list").append('<a class="ui tag label" id="label-' + (_size + 1) + '" onClick="labelClick()">' + result.tag + '</a>');
+                        $(".ui.action.right.labeled.input.second.transition.visible").attr('class', 'ui action right labeled input second transition hidden');
+                        $('.ui.action.right.labeled.input.second.transition.hidden').transition('fade down');
+                        _tag = result.tag;
+                        document.getElementById('apply-url').value = result.url;
+                    },
+                    error: function(xhr, status, error) {
+                        console.log(error);
+                    }
+                });
+            });
+            
             $("#search").click(function() {
-                const protocol = $("#protocol").text();
                 const _data = {
-                    "url": protocol + document.getElementById('search-url').value
+                    "url": document.getElementById('search-url').value
                 };
                 $.ajax({
                     type: "POST",
@@ -87,12 +129,21 @@
                     contentType: "application/json",
                     data: JSON.stringify(_data),
                     success: function(result) {
+                        $(".tag-list").empty();
+                        _size = Number(result.size)
                         if (result.Code == 409) {
-                            $('.ui.action.right.labeled.input.first').addClass('error');
+                            $(".ui.action.right.labeled.input.second.transition.visible").attr('class', 'ui action right labeled input second transition hidden');
+                            for (var i = 1; i <= result.size; i++) {
+                                $(".tag-list").append('<a class="ui tag label" id="label-' + i + '" onClick="labelClick()">' + result.tag[i] + '</a>');
+                            }
+                            $(".tag-list").append('<a class="ui tag label" id="label-' + (_size + 1) + '" onClick="labelClick()">추가</a>');
                         } else if (result.Code == 200) {
-                            $('.ui.action.right.labeled.input.first').removeClass('error');
+                            $(".ui.action.right.labeled.input.second.transition.visible").attr('class', 'ui action right labeled input second transition hidden');
                             $('.ui.action.right.labeled.input.second.transition.hidden').transition('fade down');
                             document.getElementById('apply-url').value = result.url;
+                            for (var i = 1; i <= _size; i++) {
+                                $(".tag-list").append('<a class="ui tag label" id="label-' + i + '" onClick="labelClick()">' + result.tag[i] + '</a>');
+                            }
                         }
                     },
                     error: function(xhr, status, error) {
@@ -100,12 +151,12 @@
                     }
                 });
             });
-         
             $("#apply").click(function() {
-                const protocol = $("#protocol").text();
+                const _label = document.getElementById('apply-url').value;
                 const _data = {
-                    "redirecturl": protocol + document.getElementById('search-url').value,
-                    "shareurl": document.getElementById('apply-url').value
+                    "redirecturl": document.getElementById('search-url').value,
+                    "shareurl": document.getElementById('apply-url').value,
+                    "tag": _tag
                 };
                 $.ajax({
                     type: "POST",
@@ -116,10 +167,10 @@
                     success: function(result) {
                         if (result.Code == 201) {
                             var jbResult = confirm('URL 등록 완료되었습니다.\nURL을 복사하시겠습니까?');
-                            if(jbResult) {
+                            if (jbResult) {
                                 document.getElementById("apply-url").select();
                                 document.execCommand("Copy");
-                                alert("url을 복사했습니다.");                                
+                                alert("url을 복사했습니다.");
                             }
                             location.href = "/";
                         }
@@ -129,6 +180,14 @@
                     }
                 });
             });
+
+            function labelClick() {
+                _tag = $("#" + window.event.target.id).text()
+                if (_tag == '추가') {
+                    $('.ui.tiny.modal')
+                        .modal('show');
+                }
+            }
         </script>
     </div>
 

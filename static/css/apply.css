@@ -47,10 +47,10 @@ i.edit.icon.size-a {
     font-size: 1.8rem;
 }
 
-input.large {
-    width: 331.218px;
+input#search-url.large {
+    width: 613.327px;
 }
 
 input#apply-url.normal {
-    width: 422.441px;
+    width: 618.956px;
 }
