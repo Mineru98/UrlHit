@@ -40,7 +40,7 @@
         </div>
 
         <div class="content mid">
-            <div class="ui raised very padded text container segment">
+            <div class="ui text container segment">
                 <h2 class="ui header">Url Apply</h2>
                 <p>원하는 URL을 등록하고 해당 링크로 연결하세요.</p>
                 <p></p>
@@ -50,15 +50,15 @@
                     <div class="column">
                         <div class="ui action right labeled input first">
                             <div class="ui dropdown label">
-                                <div class="text">http://</div>
+                                <div class="text" id="protocol">http://</div>
                                 <i class="dropdown icon"></i>
                                 <div class="menu transition hidden">
                                     <div class="item">http://</div>
                                     <div class="item">https://</div>
                                 </div>
                             </div>
-                            <input type="text" class="large" placeholder="input your site">
-                            <div class="ui blue button" onclick="search_click();">Search</div>
+                            <input type="text" class="large" id="search-url" placeholder="input your site">
+                            <div class="ui blue button" id="search">Search</div>
 
                         </div>
                     </div>
@@ -66,11 +66,8 @@
                 <div class="row">
                     <div class="column">
                         <div class="ui action right labeled input second transition hidden">
-                            <div class="ui label">
-                                http://www.urlhit.shop/
-                            </div>
-                            <input type="text" class="normal" placeholder="Find domain">
-                            <div class="ui blue button" onclick="apply_click();">Apply</div>
+                            <input type="text" class="normal" id="apply-url" placeholder="Find domain" readonly>
+                            <div class="ui blue button" id="apply">Apply</div>
                         </div>
                     </div>
                 </div>
@@ -78,22 +75,60 @@
         </div>
         <script>
             $('.ui.dropdown.label').dropdown();
-
-            function search_click() {
-                $('.ui.action.right.labeled.input.second.transition.hidden').transition('fade down');
-                // 클립보드 복사 기능
-                // var tempElem = document.createElement('textarea');
-                // tempElem.value = 'I am copied text!';
-                // document.body.appendChild(tempElem);
-                // tempElem.select();
-                // document.execCommand("copy");
-                // document.body.removeChild(tempElem);
-            }
-
-            function apply_click() {
-                alert("적용 완료");
-                location.href = "/";
-            }
+            $("#search").click(function() {
+                const protocol = $("#protocol").text();
+                const _data = {
+                    "url": protocol + document.getElementById('search-url').value
+                };
+                $.ajax({
+                    type: "POST",
+                    url: "/search",
+                    dataType: "json",
+                    contentType: "application/json",
+                    data: JSON.stringify(_data),
+                    success: function(result) {
+                        if (result.Code == 409) {
+                            $('.ui.action.right.labeled.input.first').addClass('error');
+                        } else if (result.Code == 200) {
+                            $('.ui.action.right.labeled.input.first').removeClass('error');
+                            $('.ui.action.right.labeled.input.second.transition.hidden').transition('fade down');
+                            document.getElementById('apply-url').value = result.url;
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log(error);
+                    }
+                });
+            });
+         
+            $("#apply").click(function() {
+                const protocol = $("#protocol").text();
+                const _data = {
+                    "redirecturl": protocol + document.getElementById('search-url').value,
+                    "shareurl": document.getElementById('apply-url').value
+                };
+                $.ajax({
+                    type: "POST",
+                    url: "/apply",
+                    dataType: "json",
+                    contentType: "application/json",
+                    data: JSON.stringify(_data),
+                    success: function(result) {
+                        if (result.Code == 201) {
+                            var jbResult = confirm('URL 등록 완료되었습니다.\nURL을 복사하시겠습니까?');
+                            if(jbResult) {
+                                document.getElementById("apply-url").select();
+                                document.execCommand("Copy");
+                                alert("url을 복사했습니다.");                                
+                            }
+                            location.href = "/";
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log(error);
+                    }
+                });
+            });
         </script>
     </div>
 

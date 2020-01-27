@@ -40,16 +40,17 @@ body {
 }
 
 i.home.icon.size-a {
-    font-size: 2rem;
+    font-size: 1.8rem;
 }
 
 i.edit.icon.size-a {
-    font-size: 2rem;
+    font-size: 1.8rem;
 }
 
 input.large {
     width: 331.218px;
 }
-input.normal {
-    width: 250px;
+
+input#apply-url.normal {
+    width: 422.441px;
 }

@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
-from flask import Flask, redirect, render_template
+from flask import Flask, redirect, render_template, request
 import sqlite3 as lite
+from short import *
 
 app = Flask (__name__)
 app.debug = True
@@ -19,77 +20,74 @@ def _init():
 def _apply():
     return render_template('apply.html')
 
+@app.route('/search', methods=['POST'])
+def _search():
+    conn = lite.connect(database_filename)
+    cs = conn.cursor()
+    query = "SELECT COUNT(*) FROM redirect WHERE redirecturl='%s';" % (request.get_json()['url'])
+    print(query)
+    cs.execute(query)
+    count = cs.fetchall()
+    print(count[0][0])
+    if count[0][0] == 0:
+        cs.execute("SELECT COUNT(*) FROM redirect;")
+        _count = cs.fetchall()
+        compat_url = URL_Shortener().shorten_url(request.get_json()['url'], _count[0][0] + 1)
+        data = {"Code": "200", "url": compat_url}
+        return data
+    elif count[0][0] > 0:
+        data = {"Code": "409"}
+        return data
+
+@app.route('/apply', methods=['POST'])
+def _applyurl():
+    conn = lite.connect(database_filename)
+    cs = conn.cursor()
+    cs.execute("SELECT COUNT(*) FROM redirect;")
+    count = cs.fetchall()
+    compat_url = URL_Shortener().shorten_url(request.get_json()['redirecturl'], count[0][0] + 1)
+    cs.execute("INSERT INTO redirect (redirecturl, shareurl) values ('%s', '%s')" % (request.get_json()['redirecturl'], compat_url[28:]))
+    # cs.execute("INSERT INTO redirect (redirecturl, shareurl) values ('%s', '%s')" % (request.get_json()['redirecturl'], compat_url[23:]))
+    conn.commit()
+    cs.close()
+    conn.close()
+    data = {"Code": "201"}
+    return data
+
 '''
 type = 유입 플랫폼
 '''
 @app.route('/<type>')
 def redriect(type):
-    conn = lite.connect(database_filename)
-    cs = conn.cursor()
-    query = "SELECT * FROM redirect;"
-    cs.execute(query)
-    all_rows = cs.fetchall()
-    data = []
-    for i in all_rows:
-        data.append({i[1] : i[2]})
-    for list in data:
-        if type == 'facebook':
-            if 'facebook' in list.keys():
-                cs.execute("INSERT INTO hitlog (type, url, time) values ('facebook', 'https://www.facebook.com', DATETIME('NOW'))")
-                conn.commit()
-                cs.close()
-                conn.close()
-                return redirect(list['facebook'])
-            else:
-                continue
-        elif type == 'naver':
-            if 'naver' in list.keys():
-                cs.execute("INSERT INTO hitlog (type, url, time) values ('naver', 'https://www.naver.com', DATETIME('NOW'))")
-                conn.commit()
-                cs.close()
-                conn.close()
-                return redirect(list['naver'])
-            else:
-                continue
-        elif type == 'google':
-            if 'google' in list.keys():
-                cs.execute("INSERT INTO hitlog (type, url, time) values ('google', 'https://www.google.com', DATETIME('NOW'))")
-                conn.commit()
-                cs.close()
-                conn.close()
-                return redirect(list['google'])
-            else:
-                continue
-        else:
-            continue
+    if type == 'favicon.ico':
+        return redirect('/static/imgs/favicon.ico')
+    else:
+        conn = lite.connect(database_filename)
+        cs = conn.cursor()
+        query = "SELECT * FROM redirect WHERE shareurl='%s';" % (type)
+        cs.execute(query)
+        _data = cs.fetchall()
+        cs.execute("INSERT INTO hitlog (k_redirect, time) values ('%s', DATETIME('NOW'))" % (type))
+        conn.commit()
+        cs.close()
+        conn.close()
+        return redirect(_data[0][1])
 
 @app.route('/get/<type>')
 def _get(type):
     conn = lite.connect(database_filename)
     cs = conn.cursor()
-    query = ("select count(*) from hitlog where type='%s';" % (type))
+    query = ("SELECT COUNT(*) FROM redirect WHERE shareurl='%s';" % (type))
     cs.execute(query)
-    _count = None;
-    all_rows = cs.fetchone()
-    for i in all_rows:
-        _count = i
+    _count = cs.fetchone()
     cs.close()
     conn.close()
-    return render_template('get.html', name=type, count=_count)
+    return render_template('get.html', name=type, count=_count[0])
 
 if __name__ == "__main__":
     cs = conn.cursor()
-    query = "CREATE TABLE IF NOT EXISTS hitlog (id INTEGER PRIMARY KEY AUTOINCREMENT, type VARCHAR(64), url VARCHAR(256), time DATETIME)"
+    query = "CREATE TABLE IF NOT EXISTS hitlog (id INTEGER PRIMARY KEY AUTOINCREMENT, k_redirect INTEGER, tag VARCHAR(64) DEFAULT 'default', time DATETIME, FOREIGN KEY(k_redirect) REFERENCES redirect(id))"
     cs.execute(query)
-    query = "CREATE TABLE IF NOT EXISTS redirect (id INTEGER PRIMARY KEY AUTOINCREMENT, type VARCHAR(64), redirecturl VARCHAR(256))"
+    query = "CREATE TABLE IF NOT EXISTS redirect (id INTEGER PRIMARY KEY AUTOINCREMENT, redirecturl VARCHAR(256), shareurl VARCHAR(256))"
     cs.execute(query)
-    cs.execute("INSERT INTO redirect (type, redirecturl) values('facebook', 'https://www.facebook.com')")
-    cs.execute("INSERT INTO redirect (type, redirecturl) values('naver', 'https://www.naver.com')")
-    cs.execute("INSERT INTO redirect (type, redirecturl) values('google', 'https://www.google.com')")
-    conn.commit()
-    query = "DELETE from redirect WHERE id > 3;"
-    cs.execute(query)
-    conn.commit()
-    cs.close()
-    conn.close()
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=80)
