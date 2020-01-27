@@ -22,6 +22,10 @@ def _gettag():
     cs = conn.cursor()
     cs.execute("SELECT tag from redirect;")
     tags = cs.fetchall()
+    # "SELECT distinct redirecturl FROM redirect;" # 전체 URL의 종류 => 각 Pie 차트의 Title
+    # "SELECT COUNT(distinct redirecturl) FROM redirect;" # 전체 URL의 종류 갯수 => 생성할 Pie 차트 갯수
+    # for문 작성
+    # "SELECT tag from redirect WHERE redirecturl IN (SELECT distinct redirecturl FROM redirect WHERE redirecturl='%s') % (url[0])" # 
     cs.execute("SELECT redirecturl from redirect;")
     urls = cs.fetchall()
     data = {"Code": "200", "size": len(tags), "urls": None, "tags": None, "hitcount": None}
