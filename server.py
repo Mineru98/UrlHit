@@ -20,33 +20,30 @@ def _init():
 def _gettag():
     conn = lite.connect(database_filename)
     cs = conn.cursor()
-    cs.execute("SELECT tag from redirect;")
-    tags = cs.fetchall()
-    # "SELECT distinct redirecturl FROM redirect;" # 전체 URL의 종류 => 각 Pie 차트의 Title
-    # "SELECT COUNT(distinct redirecturl) FROM redirect;" # 전체 URL의 종류 갯수 => 생성할 Pie 차트 갯수
-    # for문 작성
-    # "SELECT tag from redirect WHERE redirecturl IN (SELECT distinct redirecturl FROM redirect WHERE redirecturl='%s') % (url[0])" # 
-    cs.execute("SELECT redirecturl from redirect;")
-    urls = cs.fetchall()
-    data = {"Code": "200", "size": len(tags), "urls": None, "tags": None, "hitcount": None}
-    list = {}
-    vList = {}
-    uList = {}
+    
+    cs.execute("SELECT COUNT(distinct redirecturl) FROM redirect;")
+    urlCount = cs.fetchall() # 전체 URL의 종류 갯수 => 생성할 Pie 차트 갯수
+
+    cs.execute("SELECT distinct redirecturl FROM redirect;")
+    urls = cs.fetchall() # 전체 URL의 종류 => 각 Pie 차트의 Title
+    resultList = {}
     stack = 1
     for i in urls:
-        uList[stack] = i[0]
+        tmpList = {}
+        tmpList["url"] = i[0]
+        tags = {}
+        cs.execute("SELECT tag FROM redirect WHERE redirecturl='%s'" % (i[0]))
+        s_url = cs.fetchall()
+        tagStack = 1
+        for j in s_url:
+            value = cs.execute("SELECT COUNT(*) From hitlog where k_redirect=(SELECT id FROM redirect WHERE redirecturl='%s' AND tag='%s');" % (i[0], j[0]))
+            value = cs.fetchall()
+            tags[j[0]] = value[0][0]
+            tagStack = tagStack + 1
+        tmpList["tags"] = tags
+        resultList[str(stack)] = tmpList
         stack = stack + 1
-    stack = 1
-    for i in tags:
-        query = "SELECT COUNT(*) from hitlog WHERE k_redirect in (SELECT id from redirect WHERE redirecturl='%s' AND tag='%s');" % (urls[stack-1][0], i[0])
-        cs.execute(query)
-        count = cs.fetchall()
-        vList[stack] = count[0][0]
-        list[stack] = i[0]
-        stack = stack + 1
-    data["tags"] = list
-    data["hitcount"] = vList
-    data["urls"] = uList
+    data = {"Code": "200", "urlCount": urlCount[0][0], "urls": resultList}
     cs.close()
     conn.close()
     return data
@@ -122,7 +119,7 @@ def redriect(type):
         query = "SELECT * FROM redirect WHERE shareurl='%s';" % (type)
         cs.execute(query)
         _data = cs.fetchall()
-        cs.execute("INSERT INTO hitlog (k_redirect, url, time) values ('%s', '%s', DATETIME('NOW'))" % (type, _data[0][2]))
+        cs.execute("INSERT INTO hitlog (k_redirect, url, time) values ('%s', '%s', DATETIME('NOW'))" % (_data[0][0], type))
         conn.commit()
         cs.close()
         conn.close()
