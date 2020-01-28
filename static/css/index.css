@@ -47,3 +47,9 @@ i.home.icon.size-a {
 i.edit.icon.size-a {
     font-size: 1.8rem;
 }
+
+h2.ui.header {
+    overflow-x: auto;
+    white-space: nowrap;
+}
+

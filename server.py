@@ -22,10 +22,10 @@ def _gettag():
     cs = conn.cursor()
     
     cs.execute("SELECT COUNT(distinct redirecturl) FROM redirect;")
-    urlCount = cs.fetchall() # 전체 URL의 종류 갯수 => 생성할 Pie 차트 갯수
+    urlCount = cs.fetchall()
 
     cs.execute("SELECT distinct redirecturl FROM redirect;")
-    urls = cs.fetchall() # 전체 URL의 종류 => 각 Pie 차트의 Title
+    urls = cs.fetchall()
     resultList = {}
     stack = 1
     for i in urls:
@@ -33,14 +33,22 @@ def _gettag():
         tmpList["url"] = i[0]
         tags = {}
         cs.execute("SELECT tag FROM redirect WHERE redirecturl='%s'" % (i[0]))
-        s_url = cs.fetchall()
+        url = cs.fetchall()
         tagStack = 1
-        for j in s_url:
+        for j in url:
             value = cs.execute("SELECT COUNT(*) From hitlog where k_redirect=(SELECT id FROM redirect WHERE redirecturl='%s' AND tag='%s');" % (i[0], j[0]))
             value = cs.fetchall()
             tags[j[0]] = value[0][0]
             tagStack = tagStack + 1
         tmpList["tags"] = tags
+        cs.execute("SELECT shareurl FROM redirect WHERE redirecturl='%s'" % (i[0]))
+        surl = cs.fetchall()
+        surls = {}
+        tagStack = 1
+        for j in surl:
+            surls[str(tagStack)] = j[0]
+            tagStack = tagStack + 1
+        tmpList["shortulrs"] = surls
         resultList[str(stack)] = tmpList
         stack = stack + 1
     data = {"Code": "200", "urlCount": urlCount[0][0], "urls": resultList}

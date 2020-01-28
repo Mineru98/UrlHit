@@ -60,6 +60,8 @@
             <h1 class="ui header">Home</h1>
         </div>
         <div class="content mid">
+            <div class="ui grid" id="list-header">
+            </div>
             <div class="container">
             </div>
             <script>
@@ -121,8 +123,9 @@
                 
                 window.onload = function() {
                     const _data = [];
-                    var labelList = [];
-                    var dataList = [];
+                    const labelList = [];
+                    const dataList = [];
+                    const shortUrlList = [];
                     $.ajax({
                         type: "POST",
                         url: "/",
@@ -135,6 +138,7 @@
                                 $(".container").append('<div class="chart-container"><canvas id="canvas' + i + '"></canvas></div>');
                             if (result.Code == 200) {
                                 for (var i = 1; i <= result.urlCount; i++) {
+                                    shortUrlList.push(Object.values(result.urls[i].shortulrs));
                                     labelList.push(Object.keys(result.urls[i].tags));
                                     dataList.push(Object.values(result.urls[i].tags));
                                     canvasList.push({
@@ -143,10 +147,20 @@
                                     })
                                 }
                             }
+                            
                             canvasList.forEach(function(details) {
                                 var ctx = document.getElementById(details.id).getContext('2d');
                                 new Chart(ctx, details.config);
                             });
+                            
+                            for (var i = 1; i <= result.urlCount; i++) {
+                                $("#list-header").append('<div class="row"><div class="six wide column"><h2 class="ui header">' + result.urls[i].url +'</h2></div><div class="middle aligned ten wide column" id="list-labels' + i + '" style="overflow-x: auto; overflow-y:hidden; white-space:nowrap;"></div></div>');
+                                for (var j = 1; j<=Object.keys(result.urls[i].shortulrs).length; j++){
+                                    // $("#list-labels"+i).append('<a class="ui tag label" style="margin-right: 10px;margin-left: 10px;background:'+ colorSet[parseInt(Math.random() * 200) + 1] +';" href="https://urlhit.run.goorm.io/' + Object.values(result.urls[i].shortulrs)[j-1] + '">' + Object.keys(result.urls[i].tags)[j-1] + '</a>');
+                                    $("#list-labels"+i).append('<button class="ui button "style="margin-right: 10px;margin-left: 10px;background:'+ colorSet[parseInt(Math.random() * 200) + 1] +';" onClick = "location.href="https://urlhit.run.goorm.io/' + Object.values(result.urls[i].shortulrs)[j-1] + '">' + Object.keys(result.urls[i].tags)[j-1] + '</button>');
+                                }
+                                    
+                            }
                         },
                         error: function(xhr, status, error) {
                             console.log(error);

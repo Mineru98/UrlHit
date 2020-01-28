@@ -7,6 +7,8 @@ __Version 0.0.1__
 pip install flask
 ```
 
+![영상](https://www.loom.com/share/7c18789251854706848d8637e62cfadb)
+
 ### 참고자료
 [SQLite Viewer](https://sqliteonline.com/)
 <br>
