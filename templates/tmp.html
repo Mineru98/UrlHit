@@ -60,6 +60,10 @@
             <h1 class="ui header">Home</h1>
         </div>
         <div class="content mid">
+            <div class="ui grid" id="list-header">
+            </div>
+            <div class="ui grid" id="list-header2">
+            </div>
             <div class="container">
             </div>
             <script>
@@ -149,6 +153,15 @@
                                 var ctx = document.getElementById(details.id).getContext('2d');
                                 new Chart(ctx, details.config);
                             });
+                            
+                            for (var i = 1; i <= result.urlCount; i++) {
+                                $("#list-header2").append('<div class="row"><div class="six wide column"><h2 class="ui header">' + result.urls[i].url + '</h2></div><div class="middle aligned ten wide column" id="list-labels' + i + '" style="overflow-x: auto; overflow-y:hidden; white-space:nowrap;"></div></div>');
+                                for (var j = 1; j <= Object.keys(result.urls[i].shortulrs).length; j++) {
+                                    $("#list-header").append('<div class="row"style="margin-left: 100px; margin-right: 100px;"><div class="middle aligned four wide column"style="background: #d98880;">' + Object.keys(result.urls[i].tags)[j - 1] + '</div><a class="middle aligned twelve wide column"style="background: #c39bd3;font-size:20px;" href="https://urlhit.run.goorm.io/' + Object.values(result.urls[i].shortulrs)[j - 1] + '">https://urlhit.run.goorm.io/' + Object.values(result.urls[i].shortulrs)[j - 1] + '</a><div class="sixteen wide column"style="background: #7fb3d5;">' + result.urls[i].url + '</div></div>');
+                                    // $("#list-labels"+i).append('<a class="ui tag label" style="margin-right: 10px;margin-left: 10px;background:'+ colorSet[parseInt(Math.random() * 200) + 1] +';" href="https://urlhit.run.goorm.io/' + Object.values(result.urls[i].shortulrs)[j-1] + '">' + Object.keys(result.urls[i].tags)[j-1] + '</a>');
+                                    $("#list-labels" + i).append('<button class="ui button "style="margin-right: 10px;margin-left: 10px;background:' + colorSet[parseInt(Math.random() * 200) + 1] + ';" onClick = "location.href="https://urlhit.run.goorm.io/' + Object.values(result.urls[i].shortulrs)[j - 1] + '">' + Object.keys(result.urls[i].tags)[j - 1] + '</button>');
+                                }
+                            }
                         },
                         error: function(xhr, status, error) {
                             console.log(error);
