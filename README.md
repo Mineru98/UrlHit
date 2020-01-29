@@ -1,6 +1,6 @@
 # UrlHit
 
-__Version 1.0.0__
+__Version 1.1.0__
 
 ### Dependency Module
 ```
