@@ -21,34 +21,36 @@ if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(naviga
         justify-content: center;
     }
 </style>
-<ul>
-    <li>
-        <a class="active" style="padding-top:8px;padding-bottom:8px;padding-left:16px;padding-right:0px;height:48px;" href="/">
-            <img src="static/imgs/punch.png" width="32">
-        </a>
-    </li>
-    <li>
-        <a class="active" href="/">UrlHit</a>
-    </li>
-    <li>
-        <a href="/apply">Apply</a>
-    </li>
-    <li>
-        <li style="float:right">
-            <a href="#">Sign In</a>
+<div class="top nav">
+    <ul>
+        <li>
+            <a class="active" style="padding-top:8px;padding-bottom:8px;padding-left:16px;padding-right:0px;height:48px;" href="/">
+                <img src="static/imgs/punch.png" width="32">
+            </a>
         </li>
-    </li>
-    <li>
-        <li style="float:right">
-            <a href="#">Sign Up</a>
+        <li>
+            <a class="active" href="/">UrlHit</a>
         </li>
-    </li>
-</ul>
+        <li>
+            <a href="/apply">Apply</a>
+        </li>
+        <li>
+            <li style="float:right">
+                <a href="#">Sign In</a>
+            </li>
+        </li>
+        <li>
+            <li style="float:right">
+                <a href="#">Sign Up</a>
+            </li>
+        </li>
+    </ul>
+</div>
 <div class="pusher mobile">
-    <div class="content top">
+    <div class="content top mobile">
         <h1 class="ui header">Home</h1>
     </div>
-    <div class="content mid">
+    <div class="content mid mobile">
         <div class="container">
         </div>
         <script>
