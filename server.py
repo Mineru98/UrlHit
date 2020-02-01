@@ -90,12 +90,21 @@ def _search():
 
 @app.route('/apply', methods=['POST'])
 def _applyurl():
+    isOK = False
+    redirecturl = request.get_json()['redirecturl']
+    if 'https://' in redirecturl:
+        isOK = True
+    if 'http://' in redirecturl:
+        isOK = True
+    if isOK == False:
+        redirecturl = 'https://' + redirecturl
+    print(redirecturl)
     conn = lite.connect(database_filename)
     cs = conn.cursor()
     cs.execute("SELECT COUNT(*) FROM redirect;")
     count = cs.fetchall()
-    compat_url = URL_Shortener().shorten_url(request.get_json()['redirecturl'], count[0][0] + 1)
-    cs.execute("INSERT INTO redirect (redirecturl, shareurl, tag) values ('%s', '%s', '%s')" % (request.get_json()['redirecturl'], compat_url, request.get_json()['tag']))
+    compat_url = URL_Shortener().shorten_url(redirecturl, count[0][0] + 1)
+    cs.execute("INSERT INTO redirect (redirecturl, shareurl, tag) values ('%s', '%s', '%s')" % (redirecturl, compat_url, request.get_json()['tag']))
     conn.commit()
     cs.close()
     conn.close()
