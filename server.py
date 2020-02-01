@@ -158,4 +158,4 @@ if __name__ == "__main__":
     cs.execute(query)
     query = "CREATE TABLE IF NOT EXISTS hitlog (id INTEGER PRIMARY KEY AUTOINCREMENT, k_redirect INTEGER, url VARCHAR(256), time DATETIME, FOREIGN KEY(k_redirect) REFERENCES redirect(id))"
     cs.execute(query)
-    app.run(host='0.0.0.0', port=80)
+    app.run(host='0.0.0.0', port=5000)
