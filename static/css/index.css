@@ -3,7 +3,9 @@ body {
     /* text-align: center; */
 }
 
-/**/
+.top.nav {
+    background: #313443;
+}
 
 .menu.top {
     padding: 10px;
@@ -19,15 +21,35 @@ body {
     background-color: #ffffff;
     border: 1px solid;
     border-color: rgba(0, 0, 0, 0.2);
-    border-width:0px 0px 1px 0px;
+    border-width: 0px 0px 1px 0px;
 }
+
+.content.top.mobile {
+    padding: 10px;
+    text-align: left;
+    width: 100%;
+    height: 56px;
+    background-color: #ffffff;
+    border: 1px solid;
+    border-color: rgba(0, 0, 0, 0.2);
+    border-width: 0px 0px 1px 0px;
+}
+
 
 .content.mid {
     padding: 20px;
 }
 
+.content.mid.mobile {
+    padding: 0px;
+}
+
 .pusher {
     margin-left: 260px;
+}
+
+.pusher.mobile {
+    margin-left: 0px;
 }
 
 /* custom semantic css */
@@ -53,3 +75,43 @@ h2.ui.header {
     white-space: nowrap;
 }
 
+/* Test */
+
+ul {
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
+    top: 0;
+    border: 1px solid #e7e7e7;
+    background-color: #313443;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+li {
+    float: left;
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover:not(.active) {
+    background-color: #4a4e61;
+    color: white;
+}
+
+li a.active {
+    color: white;
+    background-color: #3D5959;
+}
+
+.active {
+    background-color: #3D5959;
+    color: white;
+}
