@@ -48,9 +48,51 @@ i.edit.icon.size-a {
 }
 
 input#search-url.large {
-    width: 613.327px;
+    width: 216.512px;
 }
 
 input#apply-url.normal {
-    width: 618.956px;
+    width: 188.662px;
+}
+
+/* Test */
+
+ul {
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
+    top: 0;
+    border: 1px solid #e7e7e7;
+    background-color: #313443;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+li {
+    float: left;
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover:not(.active) {
+    background-color: #4a4e61;
+    color: white;
+}
+
+li a.active {
+    color: white;
+    background-color: #3D5959;
+}
+
+
+.active {
+    background-color: #3D5959;
+    color: white;
 }
