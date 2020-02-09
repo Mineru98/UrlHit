@@ -51,28 +51,26 @@ if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(naviga
             </div>
         </div>
     </div>
-    <div class="ui text container segment">
-        <h2 class="ui header">Url Apply</h2>
-        <p>원하는 URL을 등록하고 해당 링크로 연결하세요.</p>
-        <p></p>
-    </div>
     <div class="ui one column center aligned grid">
         <div class="row">
-            <div class="column">
-                <div class="ui action right labeled input first">
-                    <input type="text" class="large" id="search-url" placeholder="input your site">
-                    <div class="ui blue button" id="search">Search</div>
-                </div>
+            <div class="ui text segment">
+                <h2 class="ui header">Url Apply</h2>
+                <p>원하는 URL을 등록하고 해당 링크로 연결하세요.</p>
+                <p></p>
             </div>
         </div>
         <div class="row">
-            <div class="column tag-list">
+            <div class="ui action right labeled input">
+                <input type="text" class="mobile large" id="search-url" placeholder="input your site">
+                <div class="ui blue button" id="search">Search</div>
             </div>
+        </div>
+        <div class="row tag-list">
         </div>
         <div class="row">
             <div class="column">
                 <div class="ui action right labeled input second transition hidden">
-                    <input type="text" class="normal" id="apply-url" placeholder="Find domain" readonly>
+                    <input type="text" class="mobile normal" id="apply-url" placeholder="Find domain" readonly>
                     <div class="ui blue button" id="apply">Apply</div>
                 </div>
             </div>
@@ -85,7 +83,7 @@ if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(naviga
     $('body').append(`
 <div class="ui overlay visible left vertical inverted sidebar menu default">
     <div class="menu top">
-        <img src="{{ url_for('static', filename='imgs/punch.png') }}" width="64">
+        <img src="static/imgs/punch.png" width="64">
     </div>
     <div class="menu top">
         <h3 class="ui header white">UrlHit</h3>

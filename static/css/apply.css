@@ -48,11 +48,21 @@ i.edit.icon.size-a {
 }
 
 input#search-url.large {
-    width: 216.512px;
+    width: 615.324px;
+}
+
+input#search-url.mobile.large {
+    margin-left: -43px;
+    width: 100%;
 }
 
 input#apply-url.normal {
-    width: 188.662px;
+    width: 620.959px;
+}
+
+input#apply-url.mobile.normal {
+    margin-left: -43px;
+    width: 100%;
 }
 
 /* Test */
