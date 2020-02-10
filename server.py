@@ -143,16 +143,9 @@ def redriect(type):
         conn.close()
         return redirect(_data[0][1])
 
-@app.route('/get/<type>')
-def _get(type):
-    conn = lite.connect(database_filename)
-    cs = conn.cursor()
-    query = ("SELECT COUNT(*) FROM hitlog WHERE url='%s';" % (type))
-    cs.execute(query)
-    _count = cs.fetchone()
-    cs.close()
-    conn.close()
-    return render_template('get.html', name=type, count=_count[0])
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 
 if __name__ == "__main__":
     cs = conn.cursor()

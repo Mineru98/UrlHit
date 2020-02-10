@@ -25,7 +25,7 @@ if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(naviga
         </li>
     </ul>
 </div>
-<div class="content top">
+<div class="content top mobile">
     <h1 class="ui header">Apply</h1>
 </div>
 
